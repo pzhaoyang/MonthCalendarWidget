@@ -30,31 +30,49 @@ public class MonthViewWidgetService extends Service {
 
     private int dayOfWeek; //一个月中第一天是星期几
     private int daysOfMonth;
-    private int currentDay;
-    private int currentMonth;
-    private int currentYear;
-	   
+    
+    Thread myThread = new Thread(){
+        public void run(){
+            while (true){
+                try{
+                    Thread.sleep(1000);
+                }catch ( InterruptedException e ){
+                    e.printStackTrace();
+                }
+                updateMonthViewWidget();
+            }
+        };
+    };
+    
 	private void updateMonthViewWidget(){
 		RemoteViews views = new RemoteViews(getPackageName(), R.layout.month_widget);
 		
-		Init();
-		
+    	Calendar cal = Calendar.getInstance();
+    	
+    	Time tm = new Time();
+    	tm.setToNow();
+    	
+    	cal.set(tm.year, tm.month, 1);
+    	dayOfWeek = cal.get(Calendar.DAY_OF_WEEK)-1;
+    	daysOfMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+    	
+    	//reset all TextView
     	for(int step = 0; step < weeks.length; step++){
     		views.setTextViewText(weeks[step], "");
     	}
     	
-		views.setTextViewText(R.id.nav, currentYear + " - " + String.format("%02d", currentMonth));
-
+    	//set date & time on title
+		views.setTextViewText(R.id.date, tm.year + " - " + String.format("%02d", tm.monthDay));
+		views.setTextViewText(R.id.time, String.format("%02d", tm.hour) + ":" + String.format("%02d", tm.minute) + ":" + String.format("%02d", tm.second));
 		for(int i=0; i<7; i++){
 			views.setTextViewText(wk_id[i],wk_label[i]);
 		}
 		
     	for(int step = 0; step < daysOfMonth; step++){
-    		android.util.Log.d("pengzhaoyang", "step = " + step + " dayofweek =" + dayOfWeek);
-    		if(step+1 == currentDay){
+    		if(step+1 == tm.monthDay){
     			views.setTextColor(weeks[step+dayOfWeek],Color.GREEN);
     		}else{
-    			views.setTextColor(weeks[step+dayOfWeek],Color.WHITE);
+    			views.setTextColor(weeks[step+dayOfWeek],0xffb7bab1);
     		}
     		views.setTextViewText(weeks[step+dayOfWeek], new Integer(step+1).toString());
     	}
@@ -65,33 +83,22 @@ public class MonthViewWidgetService extends Service {
 		intent.setAction("android.intent.action.VIEW");
 		PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
 		
-		views.setOnClickPendingIntent(R.id.nav, pendingIntent);
+		views.setOnClickPendingIntent(R.id.date, pendingIntent);
 //展示注释掉，每个日期进入的视图还没有想好
 		for(int index = 0; index < daysOfMonth; index++){
 			views.setOnClickPendingIntent(weeks[index+dayOfWeek], pendingIntent);
 		}
-
+		
+		Intent intent_tm = new Intent();
+		intent_tm.setAction("android.intent.action.SET_ALARM");
+		pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent_tm, 0);
+		views.setOnClickPendingIntent(R.id.time, pendingIntent);
 		
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
 		ComponentName componentName = new ComponentName(getApplicationContext(), MonthViewWidget.class);
 		appWidgetManager.updateAppWidget(componentName, views);
 			
 	}
-	
-    private void Init(){
-    	Calendar cal = Calendar.getInstance();
-    	
-    	Time tm = new Time();
-    	tm.setToNow();
-    	currentDay = tm.monthDay;
-    	currentMonth = tm.month +1;
-    	currentYear = tm.year;
-    	
-    	android.util.Log.d("pengzhaoyang","currentYearr = " + currentYear + "年 currentMonth = " + currentMonth + "月 currentDay = " + currentDay);
-    	cal.set(tm.year, tm.month, 1);
-    	dayOfWeek = cal.get(Calendar.DAY_OF_WEEK)-1;
-    	daysOfMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-    }
     
     private BroadcastReceiver myReceiver = new BroadcastReceiver() {
         @Override  
@@ -114,7 +121,7 @@ public class MonthViewWidgetService extends Service {
 		ifilter.addAction("com.unipro.monthcalendar.action.update");
 	    // [UNIPRO-pengzhaoyang-2014-5-4] for bug2991 }
 		registerReceiver(myReceiver, ifilter);
-		updateMonthViewWidget();
+		myThread.start();
 	}
 
 	@Override
@@ -129,5 +136,4 @@ public class MonthViewWidgetService extends Service {
 		Log.d(TAG,"onDestroy");		
 		super.onDestroy();
 	}
-
 }

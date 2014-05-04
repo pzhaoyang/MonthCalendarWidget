@@ -15,7 +15,8 @@
     android:layout_gravity="center"
     android:id="@+id/navtitle"
     android:background="@drawable/widget_bg">
-    <TextView android:id="@+id/nav" style="@style/Nav_title" />
+    <TextView android:id="@+id/date" style="@style/Nav_title" />
+    <TextView android:id="@+id/time" android:gravity="right|bottom" style="@style/Nav_time" />
 </LinearLayout>
 
 <!-- week bar-->
