@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="com.unipro.monthcalendar" android:versionCode="1"
+	android:versionName="1.2">
+	<uses-sdk android:minSdkVersion="8" />
+
+	<application android:icon="@drawable/icon" android:label="@string/app_name">
+            <receiver android:name="MonthViewWidget">
+	        <intent-filter>
+	            <action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+	        </intent-filter>
+	        <meta-data android:name="android.appwidget.provider" android:resource="@xml/monthwidget"></meta-data>
+	    </receiver>
+
+	    <service android:name="MonthViewWidgetService"
+	        android:permission="android.permission.BIND_REMOTEVIEWS"
+	        android:exported="false">
+	    </service>
+	</application>
+</manifest>
