@@ -2,6 +2,7 @@ package com.unipro.monthcalendar;
 
 import java.util.Calendar;
 
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
@@ -31,17 +32,12 @@ public class MonthViewWidgetService extends Service {
     private int dayOfWeek; //一个月中第一天是星期几
     private int daysOfMonth;
     
-    Thread myThread = new Thread(){
-        public void run(){
-            while (true){
-                try{
-                    Thread.sleep(1000);
-                }catch ( InterruptedException e ){
-                    e.printStackTrace();
-                }
-                updateMonthViewWidget();
-            }
-        };
+    private BroadcastReceiver myReceiver = new BroadcastReceiver() {
+        @Override  
+        public void onReceive(Context context, Intent intent) {  
+        	Log.d(TAG,"onReceive:"+intent.getAction());
+        	updateMonthViewWidget();
+        }
     };
     
 	private void updateMonthViewWidget(){
@@ -100,13 +96,6 @@ public class MonthViewWidgetService extends Service {
 			
 	}
     
-    private BroadcastReceiver myReceiver = new BroadcastReceiver() {
-        @Override  
-        public void onReceive(Context context, Intent intent) {  
-        	Log.d(TAG,"onReceive:"+intent.getAction());
-        	updateMonthViewWidget();
-        }
-    };  
     
 	@Override
 	public void onCreate() {
@@ -121,7 +110,7 @@ public class MonthViewWidgetService extends Service {
 		ifilter.addAction("com.unipro.monthcalendar.action.update");
 	    // [UNIPRO-pengzhaoyang-2014-5-4] for bug2991 }
 		registerReceiver(myReceiver, ifilter);
-		myThread.start();
+		onStartSecondUpdate();
 	}
 
 	@Override
@@ -135,5 +124,13 @@ public class MonthViewWidgetService extends Service {
 		unregisterReceiver(myReceiver);	
 		Log.d(TAG,"onDestroy");		
 		super.onDestroy();
+	}
+	
+	private void onStartSecondUpdate(){
+		Intent intent_am = new Intent("com.unipro.monthcalendar.action.update");
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,intent_am, 0);
+
+		AlarmManager aAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+		aAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000, pendingIntent);
 	}
 }

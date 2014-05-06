@@ -21,7 +21,6 @@ public class MonthViewWidget extends AppWidgetProvider{
 		
 		@Override
 		public void onDeleted(Context context, int[] appWidgetIds) {
-			context.stopService(new Intent(context, MonthViewWidgetService.class));
 			super.onDeleted(context, appWidgetIds);
 		}
 
