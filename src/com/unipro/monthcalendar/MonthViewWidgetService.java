@@ -1,7 +1,9 @@
 package com.unipro.monthcalendar;
 
 import java.util.Calendar;
+import java.util.Locale;
 
+import libcore.icu.LocaleData;
 import com.unipro.monthcalendar.CalendarUtil;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -22,7 +24,6 @@ public class MonthViewWidgetService extends Service {
 	private static final String TAG = "MonthViewWidgetService";
 
     private int[] wk_id = {R.id.day1,R.id.day2,R.id.day3,R.id.day4,R.id.day5,R.id.day6,R.id.day7};
-    private String[] wk_label = {"周日","周一","周二","周三","周四","周五","周六"};
     private int[] weeks = {R.id.date11, R.id.date12, R.id.date13, R.id.date14, R.id.date15, R.id.date16, R.id.date17,
 		   				      R.id.date21, R.id.date22, R.id.date23, R.id.date24, R.id.date25, R.id.date26, R.id.date27,
 		   					  R.id.date31, R.id.date32, R.id.date33, R.id.date34, R.id.date35, R.id.date36, R.id.date37,
@@ -32,6 +33,11 @@ public class MonthViewWidgetService extends Service {
 
     private int dayOfWeek; 
     private int daysOfMonth;
+    
+    private  String getDayOfWeekString(int dayOfWeek) {
+        LocaleData d = LocaleData.get(Locale.getDefault());
+        return d.shortWeekdayNames[dayOfWeek];
+    }
     
     private BroadcastReceiver myReceiver = new BroadcastReceiver() {
         @Override  
@@ -62,7 +68,7 @@ public class MonthViewWidgetService extends Service {
 		views.setTextViewText(R.id.date, tm.year + " - " + String.format("%02d", tm.month +1) + " (" +  new CalendarUtil(cal).getMonth() + ")");
 		views.setTextViewText(R.id.time, String.format("%02d", tm.hour) + ":" + String.format("%02d", tm.minute) + ":" + String.format("%02d", tm.second));
 		for(int i=0; i<7; i++){
-			views.setTextViewText(wk_id[i],wk_label[i]);
+			views.setTextViewText(wk_id[i],getDayOfWeekString(i+1));
 		}
 		
 		//星期日开始第一天
@@ -74,9 +80,7 @@ public class MonthViewWidgetService extends Service {
     		}
     		views.setTextViewText(weeks[step+dayOfWeek], new Integer(step+1).toString() + "\n" + new CalendarUtil(cal).toString());
     		cal.add(Calendar.DAY_OF_MONTH, 1);//农历设置之后再加
-    		
-//    		views.setTextViewText(weeks[step+dayOfWeek], new CalendarUtil(cal).toString());
-//    		cal.add(Calendar.DAY_OF_MONTH, 1);//农历设置之后再加
+
     	}
     	
 		Intent intent = new Intent();
@@ -110,7 +114,6 @@ public class MonthViewWidgetService extends Service {
 		ifilter.addAction(Intent.ACTION_TIME_CHANGED);
 		ifilter.addAction(Intent.ACTION_DATE_CHANGED);
 		ifilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
-		ifilter.addAction(Intent.ACTION_LOCALE_CHANGED);
         // [UNIPRO-pengzhaoyang-2014-5-4] for bug2991 {		
 		ifilter.addAction("com.unipro.monthcalendar.action.update");
 	    // [UNIPRO-pengzhaoyang-2014-5-4] for bug2991 }
@@ -126,7 +129,7 @@ public class MonthViewWidgetService extends Service {
 
 	@Override
 	public void onDestroy() {
-		unregisterReceiver(myReceiver);	
+		unregisterReceiver(myReceiver);
 		Log.d(TAG,"onDestroy");		
 		super.onDestroy();
 	}
