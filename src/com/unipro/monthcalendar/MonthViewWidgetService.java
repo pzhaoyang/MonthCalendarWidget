@@ -2,6 +2,7 @@ package com.unipro.monthcalendar;
 
 import java.util.Calendar;
 
+import com.unipro.monthcalendar.CalendarUtil;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -29,7 +30,7 @@ public class MonthViewWidgetService extends Service {
 		   					  R.id.date51, R.id.date52, R.id.date53, R.id.date54, R.id.date55, R.id.date56, R.id.date57,
 		   					  R.id.date61, R.id.date62, R.id.date63, R.id.date64, R.id.date65, R.id.date66, R.id.date67};
 
-    private int dayOfWeek; //一个月中第一天是星期几
+    private int dayOfWeek; 
     private int daysOfMonth;
     
     private BroadcastReceiver myReceiver = new BroadcastReceiver() {
@@ -58,19 +59,24 @@ public class MonthViewWidgetService extends Service {
     	}
     	
     	//set date & time on title
-		views.setTextViewText(R.id.date, tm.year + " - " + String.format("%02d", tm.monthDay));
+		views.setTextViewText(R.id.date, tm.year + " - " + String.format("%02d", tm.month +1) + " (" +  new CalendarUtil(cal).getMonth() + ")");
 		views.setTextViewText(R.id.time, String.format("%02d", tm.hour) + ":" + String.format("%02d", tm.minute) + ":" + String.format("%02d", tm.second));
 		for(int i=0; i<7; i++){
 			views.setTextViewText(wk_id[i],wk_label[i]);
 		}
 		
+		//星期日开始第一天
     	for(int step = 0; step < daysOfMonth; step++){
     		if(step+1 == tm.monthDay){
     			views.setTextColor(weeks[step+dayOfWeek],Color.GREEN);
     		}else{
     			views.setTextColor(weeks[step+dayOfWeek],0xffb7bab1);
     		}
-    		views.setTextViewText(weeks[step+dayOfWeek], new Integer(step+1).toString());
+    		views.setTextViewText(weeks[step+dayOfWeek], new Integer(step+1).toString() + "\n" + new CalendarUtil(cal).toString());
+    		cal.add(Calendar.DAY_OF_MONTH, 1);//农历设置之后再加
+    		
+//    		views.setTextViewText(weeks[step+dayOfWeek], new CalendarUtil(cal).toString());
+//    		cal.add(Calendar.DAY_OF_MONTH, 1);//农历设置之后再加
     	}
     	
 		Intent intent = new Intent();
@@ -80,7 +86,6 @@ public class MonthViewWidgetService extends Service {
 		PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
 		
 		views.setOnClickPendingIntent(R.id.date, pendingIntent);
-//展示注释掉，每个日期进入的视图还没有想好
 		for(int index = 0; index < daysOfMonth; index++){
 			views.setOnClickPendingIntent(weeks[index+dayOfWeek], pendingIntent);
 		}

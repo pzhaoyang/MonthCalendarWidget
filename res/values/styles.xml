@@ -38,7 +38,7 @@
         <item name="android:layout_weight">1.0</item>
     </style>
     <style name="Text_Dates">
-        <item name="android:textSize">18.0sp</item>
+        <item name="android:textSize">14.0sp</item>
         <item name="android:textColor">#b7bab1</item>
         <item name="android:gravity">right</item>
         <item name="android:layout_width">40dip</item>
