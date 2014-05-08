@@ -7,18 +7,11 @@ public class SolarTermsUtil {
     private int gregorianYear;
 
     private int gregorianMonth;
-
-    /**
-     * 用于计算得到公历的日期
-     */
     private int gregorianDate;
 
     private int chineseYear;
     private int chineseMonth;
     private int chineseDate;
-
-    // 初始日，公历农历对应日期：
-    // 公历 1901 年 1 月 1 日，对应农历 4598 年 11 月 11 日
     private static int baseYear = 1901;
     private static int baseMonth = 1;
     private static int baseDate = 1;
@@ -102,8 +95,6 @@ public class SolarTermsUtil {
     };
 
     private static char[] chineseMonths = {
-            // 农历月份大小压缩表，两个字节表示一年。两个字节共十六个二进制位数，
-            // 前四个位数表示闰月月份，后十二个位数表示十二个农历月份的大小。
             0x00, 0x04, 0xad, 0x08, 0x5a, 0x01, 0xd5, 0x54, 0xb4, 0x09, 0x64, 0x05, 0x59, 0x45,
             0x95, 0x0a, 0xa6, 0x04, 0x55, 0x24, 0xad, 0x08, 0x5a, 0x62, 0xda, 0x04, 0xb4, 0x05,
             0xb4, 0x55, 0x52, 0x0d, 0x94, 0x0a, 0x4a, 0x2a, 0x56, 0x02, 0x6d, 0x71, 0x6d, 0x01,
@@ -134,19 +125,10 @@ public class SolarTermsUtil {
             0xb4, 0x09, 0x68, 0x89, 0x54, 0x0b, 0xa4, 0x0a, 0xa5, 0x6a, 0x95, 0x04, 0xad, 0x08,
             0x6a, 0x44, 0xda, 0x04, 0x74, 0x05, 0xb0, 0x25, 0x54, 0x03
     };
-
-    /**
-     * 用于保存24节气
-     */
     private static String[] principleTermNames =
-            {"大寒", "雨水", "春分", "谷雨", "小满", "夏至", "大暑", "处暑", "秋分", "霜降",
-                    "小雪", "冬至"};
-    /**
-     * 用于保存24节气
-     */
+            {"澶у瘨", "闆ㄦ按", "鏄ュ垎", "璋烽洦", "灏忔弧", "澶忚嚦", "澶ф殤", "澶勬殤", "绉嬪垎", "闇滈檷","灏忛洩", "鍐嚦"};
     private static String[] sectionalTermNames =
-            {"小寒", "立春", "惊蛰", "清明", "立夏", "芒种", "小暑", "立秋", "白露", "寒露",
-                    "立冬", "大雪"};
+            {"灏忓瘨", "绔嬫槬", "鎯婅洶", "娓呮槑", "绔嬪", "鑺掔", "灏忔殤", "绔嬬", "鐧介湶", "瀵掗湶","绔嬪啲", "澶ч洩"};
 
     public SolarTermsUtil(Calendar calendar) {
         gregorianYear = calendar.get(Calendar.YEAR);
@@ -164,8 +146,7 @@ public class SolarTermsUtil {
         chineseYear = baseChineseYear;
         chineseMonth = baseChineseMonth;
         chineseDate = baseChineseDate;
-        // 第二个对应日，用以提高计算效率
-        // 公历 2000 年 1 月 1 日，对应农历 4697 年 11 月 25 日
+
         if (gregorianYear >= 2000) {
             startYear = baseYear + 99;
             startMonth = 1;
@@ -228,12 +209,6 @@ public class SolarTermsUtil {
         return term;
     }
 
-    /**
-     * 用于判断输入的年份是否为闰年
-     *
-     * @param year 输入的年份
-     * @return true 表示闰年
-     */
     public static boolean isGregorianLeapYear(int year) {
         boolean isLeap = false;
         if (year % 4 == 0) isLeap = true;
@@ -244,12 +219,11 @@ public class SolarTermsUtil {
 
     public static int daysInGregorianMonth(int y, int m) {
         int d = daysInGregorianMonth[m - 1];
-        if (m == 2 && isGregorianLeapYear(y)) d++; // 公历闰年二月多一天
+        if (m == 2 && isGregorianLeapYear(y)) d++;
         return d;
     }
 
     public static int daysInChineseMonth(int y, int m) {
-        // 注意：闰月 m < 0
         int index = y - baseChineseYear + baseIndex;
         int v = 0;
         int l = 0;
@@ -292,17 +266,8 @@ public class SolarTermsUtil {
         return n;
     }
 
-    private static int[] bigLeapMonthYears = {
-            // 大闰月的闰年年份
-            6, 14, 19, 25, 33, 36, 38, 41, 44, 52,
-            55, 79, 117, 136, 147, 150, 155, 158, 185, 193
-    };
+    private static int[] bigLeapMonthYears = {6, 14, 19, 25, 33, 36, 38, 41, 44, 52,55, 79, 117, 136, 147, 150, 155, 158, 185, 193};
 
-    /**
-     * 用于获取24节气的值
-     *
-     * @return 24节气的值
-     */
     public String getSolartermsMsg() {
         String str = "";
         String gm = String.valueOf(gregorianMonth);

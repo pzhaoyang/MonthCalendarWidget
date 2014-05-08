@@ -38,11 +38,10 @@ public class CalendarUtil {
     private static SimpleDateFormat chineseDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    //计算得到的农历年月日
     private int mLuchYear;
     private int mLuchMonth;
     private int mLuchDay;
-    private boolean isLoap;//闰年标志
+    private boolean isLoap;
     private Calendar mCurrenCalendar;
     private static int yearDays(int year) {
         int i, sum = 348;
@@ -74,16 +73,13 @@ public class CalendarUtil {
             return 30;
     }
     public String animalsYear() {
-        final String[] Animals = new String[]{"鼠", "牛", "虎", "兔", "龙", "蛇",
-                "马", "羊", "猴", "鸡", "狗", "猪"};
+        final String[] Animals = new String[]{"鼠", "牛", "虎", "兔", "龙", "蛇","马", "羊", "猴", "鸡", "狗", "猪"};
         return Animals[(mLuchYear - 4) % 12];
     }
     
     private static String cyclicalm(int num) {
-        final String[] Gan = new String[]{"甲", "乙", "丙", "丁", "戊", "己", "庚",
-                "辛", "壬", "癸"};
-        final String[] Zhi = new String[]{"子", "丑", "寅", "卯", "辰", "巳", "午",
-                "未", "申", "酉", "戌", "亥"};
+        final String[] Gan = new String[]{"甲", "乙", "丙", "丁", "戊", "己", "庚","辛", "壬", "癸"};
+        final String[] Zhi = new String[]{"子", "丑", "寅", "卯", "辰", "巳", "午","未", "申", "酉", "戌", "亥"};
 
         return (Gan[num % 10] + Zhi[num % 12]);
     }
@@ -124,7 +120,7 @@ public class CalendarUtil {
         mLuchYear = iYear;
 
         yearCyl = iYear - 1864;
-        leapMonth = leapMonth(iYear); // 闰哪个月,1-12
+        leapMonth = leapMonth(iYear);
         isLoap = false;
 
         int iMonth, daysOfMonth = 0;
@@ -182,13 +178,9 @@ public class CalendarUtil {
         message = getChinaCalendarMsg(mLuchYear, mLuchMonth, mLuchDay);
         if (isNullOrEmpty(message)) {
             String solarMsg = new SolarTermsUtil(mCurrenCalendar).getSolartermsMsg();
-            //判断当前日期是否为节气
             if (!isNullOrEmpty(solarMsg)) {
                 message = solarMsg;
             } else {
-                /**
-                 * 判断当前日期是否为公历节日
-                 */
                 String gremessage = new GregorianUtil(mCurrenCalendar).getGremessage();
                 if (!isNullOrEmpty(gremessage)) {
                     message = gremessage;
@@ -257,5 +249,4 @@ public class CalendarUtil {
     public boolean isNullOrEmpty(String str) {
         return str == null || str.trim().length() == 0;
     }
-    
 }

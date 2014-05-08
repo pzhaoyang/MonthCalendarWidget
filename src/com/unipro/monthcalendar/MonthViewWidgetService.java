@@ -3,8 +3,8 @@ package com.unipro.monthcalendar;
 import java.util.Calendar;
 import java.util.Locale;
 
-import libcore.icu.LocaleData;
 import com.unipro.monthcalendar.CalendarUtil;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -17,6 +17,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.IBinder;
 import android.widget.RemoteViews;
+import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
 
@@ -33,11 +34,6 @@ public class MonthViewWidgetService extends Service {
 
     private int dayOfWeek; 
     private int daysOfMonth;
-    
-    private  String getDayOfWeekString(int dayOfWeek) {
-        LocaleData d = LocaleData.get(Locale.getDefault());
-        return d.shortWeekdayNames[dayOfWeek];
-    }
     
     private BroadcastReceiver myReceiver = new BroadcastReceiver() {
         @Override  
@@ -68,7 +64,7 @@ public class MonthViewWidgetService extends Service {
 		views.setTextViewText(R.id.date, tm.year + " - " + String.format("%02d", tm.month +1) + " (" +  new CalendarUtil(cal).getMonth() + ")");
 		views.setTextViewText(R.id.time, String.format("%02d", tm.hour) + ":" + String.format("%02d", tm.minute) + ":" + String.format("%02d", tm.second));
 		for(int i=0; i<7; i++){
-			views.setTextViewText(wk_id[i],getDayOfWeekString(i+1));
+			views.setTextViewText(wk_id[i],DateUtils.getDayOfWeekString(i+1,DateUtils.LENGTH_MEDIUM));
 		}
 		
 		//星期日开始第一天
