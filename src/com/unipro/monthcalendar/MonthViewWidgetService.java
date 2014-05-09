@@ -1,7 +1,6 @@
 package com.unipro.monthcalendar;
 
 import java.util.Calendar;
-import java.util.Locale;
 
 import com.unipro.monthcalendar.CalendarUtil;
 
@@ -14,7 +13,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.Paint.Align;
 import android.os.IBinder;
 import android.widget.RemoteViews;
 import android.text.format.DateUtils;
@@ -43,9 +47,9 @@ public class MonthViewWidgetService extends Service {
         }
     };
     
+	@SuppressWarnings({ "deprecation" })
 	private void updateMonthViewWidget(){
 		RemoteViews views = new RemoteViews(getPackageName(), R.layout.month_widget);
-		
     	Calendar cal = Calendar.getInstance();
     	
     	Time tm = new Time();
@@ -61,8 +65,10 @@ public class MonthViewWidgetService extends Service {
     	}
     	
     	//set date & time on title
-		views.setTextViewText(R.id.date, tm.year + " - " + String.format("%02d", tm.month +1) + " (" +  new CalendarUtil(cal).getMonth() + ")");
-		views.setTextViewText(R.id.time, String.format("%02d", tm.hour) + ":" + String.format("%02d", tm.minute) + ":" + String.format("%02d", tm.second));
+        views.setTextViewText(R.id.date, tm.year + " - " + String.format("%02d", tm.month +1) + " (" +  new CalendarUtil(cal).getMonth() + ")");
+        String time = String.format("%02d", tm.hour) + ":" + String.format("%02d", tm.minute) + ":" + String.format("%02d", tm.second);
+        views.setImageViewBitmap(R.id.time, buildUpdate(time));
+
 		for(int i=0; i<7; i++){
 			views.setTextViewText(wk_id[i],DateUtils.getDayOfWeekString(i+1,DateUtils.LENGTH_MEDIUM));
 		}
@@ -98,15 +104,14 @@ public class MonthViewWidgetService extends Service {
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
 		ComponentName componentName = new ComponentName(getApplicationContext(), MonthViewWidget.class);
 		appWidgetManager.updateAppWidget(componentName, views);
-			
+
 	}
-    
-    
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		IntentFilter ifilter = new IntentFilter();
-		ifilter.addAction(Intent.ACTION_TIME_TICK);
+		//ifilter.addAction(Intent.ACTION_TIME_TICK);
 		ifilter.addAction(Intent.ACTION_TIME_CHANGED);
 		ifilter.addAction(Intent.ACTION_DATE_CHANGED);
 		ifilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
@@ -137,4 +142,21 @@ public class MonthViewWidgetService extends Service {
 		AlarmManager aAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 		aAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000, pendingIntent);
 	}
+
+	public Bitmap buildUpdate(String time){
+		Bitmap myBitmap = Bitmap.createBitmap(150, 40, Bitmap.Config.ARGB_8888);
+		Canvas myCanvas = new Canvas(myBitmap);
+		Paint paint = new Paint();
+		Typeface clock = Typeface.createFromAsset(this.getAssets(),"fonts/digi.ttf");
+
+		paint.setStyle(Paint.Style.FILL);
+		paint.setTypeface(clock);
+		paint.setColor(0xffc5e880);
+		paint.setTextSize(42);
+		paint.setTextAlign(Align.CENTER);
+		myCanvas.drawText(time, 75, 40, paint);
+
+		return myBitmap;
+    }
+
 }
