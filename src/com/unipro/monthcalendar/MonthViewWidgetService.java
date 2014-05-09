@@ -140,7 +140,7 @@ public class MonthViewWidgetService extends Service {
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,intent_am, 0);
 
 		AlarmManager aAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-		aAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000, pendingIntent);
+		aAlarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), 1000, pendingIntent);
 	}
 
 	public Bitmap buildUpdate(String time){
