@@ -67,7 +67,7 @@ public class MonthViewWidgetService extends Service {
     	
     	//set date & time on title
         views.setTextViewText(R.id.date, tm.year + " - " + String.format("%02d", tm.month +1) + " (" +  new CalendarUtil(cal).getMonth() + ")");
-        String time = String.format("%02d", tm.hour) + ":" + String.format("%02d", tm.minute) + ":" + String.format("%02d", tm.second);
+        String time = String.format("%02d", tm.hour) + ":" + String.format("%02d", tm.minute);// + ":" + String.format("%02d", tm.second);
         views.setImageViewBitmap(R.id.time, buildUpdate(time));
 
         // header
@@ -102,7 +102,7 @@ public class MonthViewWidgetService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		IntentFilter ifilter = new IntentFilter();
-		//ifilter.addAction(Intent.ACTION_TIME_TICK);
+		ifilter.addAction(Intent.ACTION_TIME_TICK);
 		ifilter.addAction(Intent.ACTION_TIME_CHANGED);
 		ifilter.addAction(Intent.ACTION_DATE_CHANGED);
 		ifilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
@@ -176,10 +176,12 @@ public class MonthViewWidgetService extends Service {
 		for(int step = 0; step < weeks.length; step++){
 			if(cal.get(Calendar.DAY_OF_MONTH)  == tm.monthDay){
 				views.setTextColor(weeks[step],Color.GREEN);
-			}else if(Math.abs(step - sft)%7 == 0 || Math.abs(step - (sft+1))%7 == 0){
-				views.setTextColor(weeks[step],0xffff7a7a);
 			}else if(step >= Math.abs( shift)  && step < daysOfMonth + Math.abs(shift)){
-				views.setTextColor(weeks[step],0xffeeeeee);
+				 if(Math.abs(step - sft)%7 == 0 || Math.abs(step - (sft+1))%7 == 0){
+						views.setTextColor(weeks[step],0xffff7a7a);
+					}else{
+						views.setTextColor(weeks[step],0xffeeeeee);
+					}
 			}else{
 				views.setTextColor(weeks[step],0xaa888888);
 			}
