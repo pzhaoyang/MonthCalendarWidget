@@ -1,5 +1,6 @@
 package com.unipro.monthcalendar;
 
+import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
 import com.unipro.monthcalendar.CalendarUtil;
@@ -21,7 +22,6 @@ import android.graphics.Typeface;
 import android.graphics.Paint.Align;
 import android.os.IBinder;
 import android.widget.RemoteViews;
-import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
 
@@ -38,6 +38,7 @@ public class MonthViewWidgetService extends Service {
 
     private int dayOfWeek; 
     private int daysOfMonth;
+    private int startofweek = Calendar.SUNDAY;
     
     private BroadcastReceiver myReceiver = new BroadcastReceiver() {
         @Override  
@@ -69,22 +70,12 @@ public class MonthViewWidgetService extends Service {
         String time = String.format("%02d", tm.hour) + ":" + String.format("%02d", tm.minute) + ":" + String.format("%02d", tm.second);
         views.setImageViewBitmap(R.id.time, buildUpdate(time));
 
-		for(int i=0; i<7; i++){
-			views.setTextViewText(wk_id[i],DateUtils.getDayOfWeekString(i+1,DateUtils.LENGTH_MEDIUM));
-		}
-		
-		//星期日开始第一天
-    	for(int step = 0; step < daysOfMonth; step++){
-    		if(step+1 == tm.monthDay){
-    			views.setTextColor(weeks[step+dayOfWeek],Color.GREEN);
-    		}else{
-    			views.setTextColor(weeks[step+dayOfWeek],0xffb7bab1);
-    		}
-    		views.setTextViewText(weeks[step+dayOfWeek], new Integer(step+1).toString() + "\n" + new CalendarUtil(cal).toString());
-    		cal.add(Calendar.DAY_OF_MONTH, 1);//农历设置之后再加
-
-    	}
-    	
+        // header
+        ShowWeekHeader(startofweek, views);
+        
+        //weeks
+        ShowWeeks(views,cal,tm);
+        
 		Intent intent = new Intent();
 		
 		intent.setComponent(new ComponentName("com.android.calendar","com.android.calendar.AllInOneActivity"));
@@ -115,11 +106,9 @@ public class MonthViewWidgetService extends Service {
 		ifilter.addAction(Intent.ACTION_TIME_CHANGED);
 		ifilter.addAction(Intent.ACTION_DATE_CHANGED);
 		ifilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
-        // [UNIPRO-pengzhaoyang-2014-5-4] for bug2991 {		
 		ifilter.addAction("com.unipro.monthcalendar.action.update");
-	    // [UNIPRO-pengzhaoyang-2014-5-4] for bug2991 }
 		registerReceiver(myReceiver, ifilter);
-		onStartSecondUpdate();
+		//onStartSecondUpdate();
 	}
 
 	@Override
@@ -158,5 +147,45 @@ public class MonthViewWidgetService extends Service {
 
 		return myBitmap;
     }
-
+/**
+ * 计算一个月中第一周的第一天和一个星期开始的第一天的偏移
+ * @param startwk  first day of week
+ * @param firstwk first day of month 's weekday
+ * */
+	private int CalShiftofFirstWeek(int startwk, int firstwk){
+		int gap = startwk - firstwk;
+		return gap <= 0 ? gap : gap -7 ; 
+	}
+	
+	private void ShowWeekHeader(int startwk,RemoteViews views ){
+		int sft;
+	    DateFormatSymbols dfs = DateFormatSymbols.getInstance();
+	    String[] weekdays = dfs.getShortWeekdays();
+	    
+	    for (int day = 0; day < Calendar.SATURDAY; day++) {
+	    	sft = startwk+day <= Calendar.SATURDAY ? startwk+day :  startwk+day  - Calendar.SATURDAY;
+			views.setTextViewText(wk_id[day],weekdays[sft]);
+		}
+	}
+	private void ShowWeeks(RemoteViews views, Calendar cal, Time tm){
+		int shift = CalShiftofFirstWeek(startofweek,cal.get(Calendar.DAY_OF_WEEK));
+		int sft = Calendar.SATURDAY - startofweek ;
+		
+		cal.add(Calendar.DAY_OF_MONTH,shift);
+		
+		for(int step = 0; step < weeks.length; step++){
+			if(cal.get(Calendar.DAY_OF_MONTH)  == tm.monthDay){
+				views.setTextColor(weeks[step],Color.GREEN);
+			}else if(Math.abs(step - sft)%7 == 0 || Math.abs(step - (sft+1))%7 == 0){
+				views.setTextColor(weeks[step],0xffff7a7a);
+			}else if(step >= Math.abs( shift)  && step < daysOfMonth + Math.abs(shift)){
+				views.setTextColor(weeks[step],0xffeeeeee);
+			}else{
+				views.setTextColor(weeks[step],0xaa888888);
+			}
+			views.setTextViewText(weeks[step], cal.get(Calendar.DAY_OF_MONTH)+ "\n" + new CalendarUtil(cal).toString());
+			
+			cal.add(Calendar.DAY_OF_MONTH, 1);//农历设置之后再加
+		}
+	}
 }
