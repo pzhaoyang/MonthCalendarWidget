@@ -4,37 +4,66 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 
 
 public class MonthViewWidget extends AppWidgetProvider{
-	   
+	
+	private Context widgetcontext;
 		@Override
-		public void onUpdate(Context context,
-			   AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-			   // [UNIPRO-pengzhaoyang-2014-5-4] for bug2991 {
-			   Intent intent = new Intent();
-			   intent.setAction("com.unipro.monthcalendar.action.update");		   
-			   context.sendBroadcast(intent);
-			   // [UNIPRO-pengzhaoyang-2014-5-4] for bug2991 }
-			super.onUpdate(context, appWidgetManager, appWidgetIds);
+		public void onUpdate(Context context,  AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+			android.util.Log.d("abc","onUpdate");
+			initService(context);
 		}
-		
+
 		@Override
 		public void onDeleted(Context context, int[] appWidgetIds) {
 			super.onDeleted(context, appWidgetIds);
 		}
 
 		@Override
-		public void onEnabled(Context context) {
-			context.startService(new Intent(context, MonthViewWidgetService.class));
-			super.onEnabled(context);
+		public void onReceive(Context context, Intent intent) {
+			try{
+				String action = intent.getAction();
+				android.util.Log.d("abc","action = " + action);
+				if (action.equals(Intent.ACTION_TIME_TICK)
+						|| action.equals(Intent.ACTION_TIME_CHANGED)
+						|| action.equals(Intent.ACTION_DATE_CHANGED)
+						|| action.equals(Intent.ACTION_TIMEZONE_CHANGED)
+						|| action.equals(Intent.ACTION_LOCALE_CHANGED)
+						) {
+					MonthViewWidgetService.updateMonthViewWidget(context);
+				}else{
+					   super.onReceive(context, intent);
+					   return;
+				}
+			}catch(NullPointerException e){
+				initService(context); 
+			}
+		}
+		
+		private void initService(Context context) {
+			Intent intent = new Intent(context, MonthViewWidgetService.class);
+			context.startService(intent);
 		}
 
 		@Override
 		public void onDisabled(Context context) {
-			context.stopService(new Intent(context, MonthViewWidgetService.class));
-			super.onDisabled(context);
+			if (widgetcontext != null) {
+				widgetcontext.unregisterReceiver(this);
+			}
 		}
-		
+
+		@Override
+		public void onEnabled(Context context) {
+			IntentFilter filter = new IntentFilter();
+			filter.addAction(Intent.ACTION_TIME_TICK);
+			filter.addAction(Intent.ACTION_TIME_CHANGED);
+			filter.addAction(Intent.ACTION_DATE_CHANGED);
+			filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+			filter.addAction(Intent.ACTION_LOCALE_CHANGED);
+			widgetcontext = context.getApplicationContext();
+			widgetcontext.registerReceiver(this, filter);
+		}
 		
 }
