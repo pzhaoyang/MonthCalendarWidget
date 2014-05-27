@@ -118,7 +118,8 @@ public class MonthViewWidgetService extends IntentService {
 		cal.add(Calendar.DAY_OF_MONTH,shift);
 		
 		for(int step = 0; step < weeks.length; step++){
-			if(cal.get(Calendar.DAY_OF_MONTH)  == tm.monthDay){
+			if(cal.get(Calendar.DAY_OF_MONTH)  == tm.monthDay
+					&& step >= Math.abs( shift)  && step < daysOfMonth + Math.abs(shift)){
 				views.setTextColor(weeks[step],Color.GREEN);
 			}else if(step >= Math.abs( shift)  && step < daysOfMonth + Math.abs(shift)){
 				 if(Math.abs(step - sft)%7 == 0 || Math.abs(step - (sft+1))%7 == 0){
