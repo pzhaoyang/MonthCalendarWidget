@@ -4,5 +4,7 @@
     android:minHeight="220dip" 
     android:initialLayout="@layout/loading"
     android:previewImage="@drawable/preview"
+    android:minResizeWidth="220dip"
+    android:minResizeHeight="220dip"
+    android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="0"  />
-<!-- android:initialLayout="@layout/month_widget" -->

@@ -8,6 +8,9 @@ import java.util.Date;
 import com.unipro.monthcalendar.SolarTermsUtil;
 public class CalendarUtil {
 
+    private final static String[] FestivalsArray = 	{"元旦", "情人", "妇女", "植树", "愚人", "劳动", "青年", "儿童", "建党", "建军", "教师", "国庆",
+    	"光棍", "艾滋", "圣诞", "除夕", "腊八", "重阳", "中秋", "七夕", "端午", "元宵", "春节"};
+
     private final static String CHINESE_NUMBER[] = {"一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "腊"};
 
     private final static String WEEK_NUMBER[] = {"日", "一", "二", "三", "四", "五", "六"};
@@ -90,7 +93,6 @@ public class CalendarUtil {
     }
     
     public CalendarUtil(Calendar cal) {
-        int yearCyl, monCyl, dayCyl;
         mCurrenCalendar = cal;
         int leapMonth = 0;
         Date baseDate = null;
@@ -101,25 +103,22 @@ public class CalendarUtil {
         }
 
         int offset = (int) ((cal.getTime().getTime() - baseDate.getTime()) / 86400000L);
-        dayCyl = offset + 40;
-        monCyl = 14;
-        
+        int monCyl = 14;
         int iYear, daysOfYear = 0;
         for (iYear = 1900; iYear < 2050 && offset > 0; iYear++) {
             daysOfYear = yearDays(iYear);
             offset -= daysOfYear;
-            monCyl += 12;
+            monCyl = monCyl +12;
         }
         
         if (offset < 0) {
             offset += daysOfYear;
             iYear--;
-            monCyl -= 12;
+            monCyl = monCyl - 12;
         }
         
         mLuchYear = iYear;
 
-        yearCyl = iYear - 1864;
         leapMonth = leapMonth(iYear);
         isLoap = false;
 
@@ -174,7 +173,6 @@ public class CalendarUtil {
     
     public String toString() {
         String message = "";
-        int n = mLuchDay % 10 == 0 ? 9 : mLuchDay % 10 - 1;
         message = getChinaCalendarMsg(mLuchYear, mLuchMonth, mLuchDay);
         if (isNullOrEmpty(message)) {
             String solarMsg = new SolarTermsUtil(mCurrenCalendar).getSolartermsMsg();
@@ -248,5 +246,16 @@ public class CalendarUtil {
     }
     public boolean isNullOrEmpty(String str) {
         return str == null || str.trim().length() == 0;
+    }
+    
+    public static boolean IsFestival(String lunar){
+    	boolean bRet = false;
+    	for(String scan:FestivalsArray){
+    		if(lunar.equals(scan)){
+    			bRet = true;
+    			break;
+    		}
+    	}
+    	return bRet;
     }
 }

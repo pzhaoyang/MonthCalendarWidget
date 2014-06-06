@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="Nav_title">
         <item name="android:textSize">24.0sp</item>
-        <item name="android:textColor">#b7bab1</item>
+        <item name="android:textColor">#ffffffe0</item>
         <item name="android:textStyle">bold</item>
         <item name="android:gravity">left</item>
         <item name="android:layout_marginLeft">15dip</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1.0</item>
     </style>
 
 	<style name="Nav_time">
 	    <item name="android:textSize">16.0sp</item>
-	    <item name="android:textColor">#c5e880</item>
+	    <item name="android:textColor">#ffffffe0</item>
 	    <item name="android:textStyle">bold</item>
-	    <item name="android:gravity">left</item>
-	    <item name="android:layout_marginLeft">15dip</item>
+	    <item name="android:gravity">right|bottom</item>
+	      <item name="android:layout_marginRight">5dip</item>
 	    <item name="android:layout_width">wrap_content</item>
-	    <item name="android:layout_height">wrap_content</item>
+	    <item name="android:layout_height">match_parent</item>
 	    <item name="android:layout_weight">1.0</item>
 	</style>
     
@@ -31,18 +31,41 @@
         <item name="android:layout_weight">1.0</item>
     </style>
 
-    <style name="LL_Week">
+    <style name="header_cell">
+        <item name="android:textSize">13.0sp</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginRight">10dip</item>
-        <item name="android:layout_weight">1.0</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@drawable/header_bg</item>
+        <item name="android:gravity">center</item>
+         <item name="android:textColor">#e5bf89</item>
+        <item name="android:layout_weight">1</item>
     </style>
-    <style name="Text_Dates">
-        <item name="android:textSize">14.0sp</item>
-        <item name="android:textColor">#b7bab1</item>
-        <item name="android:gravity">right</item>
-        <item name="android:layout_width">40dip</item>
-        <item name="android:layout_height">40dip</item>
+    
+    <style name="calendar_cell">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+         <item name="android:textColor">#FF004141</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+    
+    <style name="calendar_cell_today">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+         <item name="android:textColor">#FF96DF00</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+    
+    <style name="calendar_cell_out_day">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+         <item name="android:textColor">#FF666666</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+    
+    <style name="festival_cell">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+         <item name="android:textColor">#ff0000</item>
         <item name="android:layout_weight">1</item>
     </style>
 </resources>

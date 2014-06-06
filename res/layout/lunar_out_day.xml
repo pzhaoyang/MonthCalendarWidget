@@ -1,0 +1,5 @@
+<TextView  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/text2"
+    android:textSize="12sp"
+    android:gravity="top|center"
+	style="@style/calendar_cell_out_day"/>
