@@ -12,7 +12,6 @@ public class MonthViewWidget extends AppWidgetProvider{
 	private Context widgetcontext;
 		@Override
 		public void onUpdate(Context context,  AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-			android.util.Log.d("abc","onUpdate");
 			initService(context);
 		}
 
@@ -25,7 +24,6 @@ public class MonthViewWidget extends AppWidgetProvider{
 		public void onReceive(Context context, Intent intent) {
 			try{
 				String action = intent.getAction();
-				android.util.Log.d("abc","action = " + action);
 				if (action.equals(Intent.ACTION_TIME_TICK)
 						|| action.equals(Intent.ACTION_TIME_CHANGED)
 						|| action.equals(Intent.ACTION_DATE_CHANGED)
@@ -64,6 +62,5 @@ public class MonthViewWidget extends AppWidgetProvider{
 			filter.addAction(Intent.ACTION_LOCALE_CHANGED);
 			widgetcontext = context.getApplicationContext();
 			widgetcontext.registerReceiver(this, filter);
-		}
-		
+		}		
 }

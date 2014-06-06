@@ -111,8 +111,16 @@ public class MonthViewWidgetService extends IntentService {
 	        		res_id = R.layout.normal_day;
 	        		if( CalendarUtil.IsFestival(new CalendarUtil(cal).toString()) ){
 	        			lunar_res_id = R.layout.lunar_festival;
-	        		}else{
+	        		} else  if( CalendarUtil.IsSpecial(new CalendarUtil(cal).toString()) ){
+	        			lunar_res_id = R.layout.special_day;
+	        		} else{
 	        			lunar_res_id = R.layout.lunar_normal;
+	        		}
+	        	}else{
+	        		if( CalendarUtil.IsFestival(new CalendarUtil(cal).toString()) ){
+	        			lunar_res_id = R.layout.lunar_festival;
+	        		}else if( CalendarUtil.IsSpecial(new CalendarUtil(cal).toString()) ){
+	        			lunar_res_id = R.layout.special_day;
 	        		}
 	        	}
 	            RemoteViews daycell = new RemoteViews(context.getPackageName(), res_id);

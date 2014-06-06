@@ -8,8 +8,7 @@ import java.util.Date;
 import com.unipro.monthcalendar.SolarTermsUtil;
 public class CalendarUtil {
 
-    private final static String[] FestivalsArray = 	{"元旦", "情人", "妇女", "植树", "愚人", "劳动", "青年", "儿童", "建党", "建军", "教师", "国庆",
-    	"光棍", "艾滋", "圣诞", "除夕", "腊八", "重阳", "中秋", "七夕", "端午", "元宵", "春节"};
+    private final static String[] FestivalsArray = 	{"元旦", "妇女", "清明", "劳动", "青年", "青年", "儿童", "建党", "建军", "教师", "国庆", "除夕", "腊八", "重阳", "中秋", "七夕", "端午", "元宵", "春节",};
 
     private final static String CHINESE_NUMBER[] = {"一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "腊"};
 
@@ -225,16 +224,26 @@ public class CalendarUtil {
             message = "春节";
         } else if (((month) == 1) && day == 15) {
             message = "元宵";
+        } else if (((month) == 2) && day == 2) {
+            message = "青龙";
         } else if (((month) == 5) && day == 5) {
             message = "端午";
         } else if ((month == 7) && day == 7) {
             message = "七夕";
+        } else if ((month == 7) && day == 15) {
+            message = "中元";
         } else if (((month) == 8) && day == 15) {
             message = "中秋";
         } else if ((month == 9) && day == 9) {
             message = "重阳";
+        } else if ((month == 10) && day == 1) {
+            message = "寒衣";
+        } else if ((month == 10) && day == 15) {
+            message = "下元";
         } else if ((month == 12) && day == 8) {
             message = "腊八";
+        } else if ((month == 12) && day == 23) {
+            message = "祭灶";
         } else {
             if (month == 12) {
                 if ((((monthDays(year, month) == 29) && day == 29)) || ((((monthDays(year, month) == 30) && day == 30)))) {
@@ -253,6 +262,18 @@ public class CalendarUtil {
     	for(String scan:FestivalsArray){
     		if(lunar.equals(scan)){
     			bRet = true;
+    			break;
+    		}
+    	}
+    	return bRet;
+    }
+    
+    public static boolean IsSpecial(String day){
+    	boolean bRet = true;
+    	String key[] = {"初", "十", "廿", "卅","月"};
+    	for(String scan:key){
+    		if(day.contains(scan)){
+    			bRet = false;
     			break;
     		}
     	}

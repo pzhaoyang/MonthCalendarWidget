@@ -279,9 +279,9 @@ public class SolarTermsUtil {
         String cd = String.valueOf(chineseDate);
         if (cd.length() == 1) cd = ' ' + cd;
         if (gregorianDate == sectionalTerm) {
-            str = " " + sectionalTermNames[gregorianMonth - 1];
+            str = "" + sectionalTermNames[gregorianMonth - 1];
         } else if (gregorianDate == principleTerm) {
-            str = " " + principleTermNames[gregorianMonth - 1];
+            str = "" + principleTermNames[gregorianMonth - 1];
         }
         return str;
     }
